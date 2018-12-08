@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// Builds all packages in the current working directory and reports the errors to stdout
+// Builds all packages in the current working directory and reports any errors to stdout
 func buildPackages(done chan struct{}) {
 	defer func() { done <- struct{}{}}()
 	cmd := exec.Command("go", "build", "./...")
@@ -26,7 +26,7 @@ func buildPackages(done chan struct{}) {
 	fmt.Print(buff.String())
 }
 
-// Builds all tests in the current working directory and reports the errors to stdout
+// Builds all tests in the current working directory and reports any errors to stdout
 func buildTests(done chan struct{}) {
 	defer func() { done <- struct{}{}}()
 	cmd := exec.Command("go", "test", "-run", "unlikelypackagename", "./...")
