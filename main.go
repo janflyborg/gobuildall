@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"regexp"
 	"strings"
@@ -23,7 +24,7 @@ func buildPackages(done chan struct{}) {
 		// Errors that are not an ExitError is a problem
 		log.Fatal(err)
 	}
-	fmt.Print(buff.String())
+	fmt.Fprint(os.Stderr, buff.String())
 }
 
 // Builds all tests in the current working directory and reports any errors to stdout
@@ -53,7 +54,7 @@ func buildTests(done chan struct{}) {
 			panic(err)
 		}
 		if matched {
-			fmt.Println(l)
+			fmt.Fprintln(os.Stderr, l)
 		}
 	}
 }
