@@ -5,6 +5,6 @@ When invoked like this:
 
 `$ ./gobuildall`
 
-it will build every package and test in your current working directory.
+It will build every package and test in your current working directory.
 
 Install it with `go get github.com/janflyborg/gobuildall` and add it as a shortcut to your IDE of choice.
