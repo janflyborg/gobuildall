@@ -3,7 +3,7 @@ Small utility that compiles all packages and all tests in a Go project without k
 
 When invoked like this:
 
-`$ ./gobuildall`
+`$ gobuildall`
 
 It will build every package and test in your current working directory.
 
