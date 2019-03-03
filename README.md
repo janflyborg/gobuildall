@@ -11,6 +11,6 @@ When invoked like this:
 
 `$ gobuildall directory_a directory_b`
 
-It will build every package and test in directory_a and directory_b.
+It will build every package and test in directory_a and directory_b in parallel.
 
 Install with `go get -u github.com/janflyborg/gobuildall` and add it as a shortcut to your IDE of choice.
