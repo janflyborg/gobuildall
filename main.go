@@ -11,11 +11,12 @@ import (
 )
 
 // Builds all packages in the current working directory and reports any errors to stdout
-func buildPackages(done chan struct{}) {
-	defer func() { done <- struct{}{}}()
+func buildPackages(directory string, done chan struct{}) {
+	defer func() { done <- struct{}{} }()
 	cmd := exec.Command("go", "build", "./...")
 	buff := bytes.Buffer{}
 	cmd.Stderr = &buff
+	cmd.Dir = directory
 	err := cmd.Run()
 	if err == nil {
 		return
@@ -28,11 +29,12 @@ func buildPackages(done chan struct{}) {
 }
 
 // Builds all tests in the current working directory and reports any errors to stdout
-func buildTests(done chan struct{}) {
-	defer func() { done <- struct{}{}}()
+func buildTests(directory string, done chan struct{}) {
+	defer func() { done <- struct{}{} }()
 	cmd := exec.Command("go", "test", "-run", "unlikelypackagename", "./...")
 	buff := bytes.Buffer{}
 	cmd.Stderr = &buff
+	cmd.Dir = directory
 	err := cmd.Run()
 	if err == nil {
 		return
@@ -59,11 +61,37 @@ func buildTests(done chan struct{}) {
 	}
 }
 
+// Stop with an error message
+func fatal(s string, args ...interface{}) {
+	fmt.Fprintf(os.Stderr, "Error: "+s+"\n", args...)
+	os.Exit(-1)
+}
+
 func main() {
-	// Build all packages and the tests in parallell
+	// Check if the user specified a set of directories to build in - Otherwise we use current working directory
+	buildDirs := make([]string, 0)
+	if len(os.Args) > 1 {
+		buildDirs = os.Args[1:]
+	} else {
+		buildDirs = []string{"."}
+	}
+
+	// Build all packages and the tests in parallel for each directory given
 	doneChan := make(chan struct{})
-	go buildPackages(doneChan)
-	go buildTests(doneChan)
-	<-doneChan
-	<-doneChan
+	for _, d := range buildDirs {
+		if s, err := os.Stat(d); err != nil {
+			if os.IsNotExist(err) {
+				fatal("Directory %s does not exist.", d)
+			}
+			if !s.IsDir() {
+				fatal("Path %s does not refer to a directory.", d)
+			}
+		}
+		go buildPackages(d, doneChan)
+		go buildTests(d, doneChan)
+	}
+	// Wait for all builds to finish
+	for i := 0; i < 2*len(buildDirs); i++ {
+		<-doneChan
+	}
 }
