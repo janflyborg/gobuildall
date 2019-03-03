@@ -7,4 +7,10 @@ When invoked like this:
 
 It will build every package and test in your current working directory.
 
-Install with `go get github.com/janflyborg/gobuildall` and add it as a shortcut to your IDE of choice.
+When invoked like this:
+
+`$ gobuildall directory_a directory_b`
+
+It will build every package and test in directory_a and directory_b.
+
+Install with `go get -u github.com/janflyborg/gobuildall` and add it as a shortcut to your IDE of choice.
